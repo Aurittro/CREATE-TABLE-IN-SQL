@@ -1,0 +1,20 @@
+SELECT * FROM Lab_Grades;
+
+ALTER TABLE Lab_Grades ADD project_title CHAR(10);
+
+ALTER TABLE Lab_Grades MODIFY COLUMN project_title VARCHAR(50);
+
+
+ALTER TABLE Lab_Grades DROP COLUMN project_title;
+
+UPDATE Lab_Grades SET major ='CSE' WHERE name ='Arafat';
+UPDATE Lab_Grades SET name='Naheed',project_marks = 16, where std_id='s004';
+DELETE FROM Lab_Grades WHERE name="Naima";
+DELETE FROM Lab_Grades WHERE days_present<8;
+SELECT std_id ,name,project_marks FROM Lab_Grades;
+SELECT name,project_marks+days_present*5/12 AS total_marks FROM Lab_Grades;
+SELECT * FROM Lab_Grades ORDER BY name;
+SELECT * FROM Lab Grades ORDER BY name DESC;
+SELECT name,project_marks FROM Lab_Grades WHERE major ='CSE' ;
+SELECT name,project_marks FROM Lab_Grades WHERE project_marks BETWEEN 17 and 19; 
+SELECT * FROM Lab_Grades WHERE major in ('CSE','CS');
