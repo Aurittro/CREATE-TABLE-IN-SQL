@@ -18,3 +18,6 @@ SELECT * FROM Lab Grades ORDER BY name DESC;
 SELECT name,project_marks FROM Lab_Grades WHERE major ='CSE' ;
 SELECT name,project_marks FROM Lab_Grades WHERE project_marks BETWEEN 17 and 19; 
 SELECT * FROM Lab_Grades WHERE major in ('CSE','CS');
+SELECT * FROM Lab_Grades WHERE project_marks>18 and submission date between '2018-08-01' and '2018-08-31'
+SELECT * FROM Lab_Grades WHERE name LINK 'a%';
+SELECT * FROM Lab_Grades WHERE name LINK 'a%a%';
