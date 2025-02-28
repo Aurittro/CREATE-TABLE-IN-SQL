@@ -1,0 +1,74 @@
+CREATE TABLE Employee (
+    employee_id CHAR(10) PRIMARY KEY,
+    first_name VARCHAR(20),
+    last_name VARCHAR(20),
+    email VARCHAR(60) UNIQUE,
+    phone_number CHAR(14),
+    hire_date DATE,
+    job_id CHAR(10),
+    salary INT,
+    commission_pct DECIMAL(5,3),
+    manager_id CHAR(10),
+    department_id CHAR(10)
+);
+INSERT INTO Employee (employee_id, first_name, last_name, email, phone_number, hire_date, job_id, salary, commission_pct, manager_id, department_id)
+VALUES
+    ('EMP001', 'John', 'Doe', 'john.doe@example.com', '01234567890123', '2022-01-15', 'JOB001', 50000, 0.100, 'MNG001', 'DPT001'),
+    ('EMP002', 'Jane', 'Smith', 'jane.smith@example.com', '01234567890124', '2021-07-20', 'JOB002', 60000, 0.150, 'MNG002', 'DPT002'),
+    ('EMP003', 'Mike', 'Brown', 'mike.brown@example.com', '01234567890125', '2023-03-10', 'JOB003', 45000, 0.075, 'MNG001', 'DPT003'),
+    ('EMP004', 'Anna', 'Johnson', 'anna.johnson@example.com', '01234567890126', '2020-10-05', 'JOB004', 70000, 0.200, 'MNG003', 'DPT004'),
+    ('EMP005', 'David', 'Lee', 'david.lee@example.com', '01234567890127', '2022-05-25', 'JOB005', 55000, 0.125, 'MNG002', 'DPT005'),
+    ('EMP006', 'Emily', 'Davis', 'emily.davis@example.com', '01234567890128', '2023-08-30', 'JOB006', 65000, 0.175, 'MNG003', 'DPT006'),
+    ('EMP007', 'Robert', 'Wilson', 'robert.wilson@example.com', '01234567890129', '2021-12-12', 'JOB007', 80000, 0.250, 'MNG001', 'DPT007'),
+    ('EMP008', 'Sophia', 'Martinez', 'sophia.martinez@example.com', '01234567890130', '2022-11-18', 'JOB008', 40000, 0.050, 'MNG002', 'DPT001'),
+    ('EMP009', 'James', 'Anderson', 'james.anderson@example.com', '01234567890131', '2021-01-01', 'JOB009', 75000, 0.220, 'MNG003', 'DPT002'),
+    ('EMP010', 'Linda', 'Taylor', 'linda.taylor@example.com', '01234567890132', '2020-06-16', 'JOB010', 48000, 0.090, 'MNG001', 'DPT003');
+SELECT first_name, last_name, email, phone_number, hire_date, department_id
+FROM Employee
+WHERE hire_date = (SELECT MAX(hire_date) FROM Employee);
+SELECT first_name, last_name, employee_id, commission_pct, department_id
+FROM Employee
+WHERE department_id = 'DPT007'
+AND commission_pct < ALL (
+    SELECT commission_pct
+    FROM Employee
+    WHERE department_id = 'DPT005'
+);
+SELECT first_name, last_name, employee_id, commission_pct, department_id
+FROM Employee
+WHERE department_id = 'DPT007'
+AND commission_pct < (
+    SELECT MIN(commission_pct)
+    FROM Employee
+    WHERE department_id = 'DPT005'
+);
+SELECT department_id, COUNT(employee_id) AS total_employees
+FROM Employee
+WHERE department_id NOT IN (
+    SELECT DISTINCT department_id 
+    FROM Employee 
+    WHERE salary > 30000
+)
+GROUP BY department_id;
+SELECT DISTINCT e1.department_id, e1.job_id, e1.commission_pct
+FROM Employee e1, Employee e2
+WHERE e1.department_id = e2.department_id 
+AND e1.commission_pct < e2.commission_pct;
+SELECT DISTINCT manager_id
+FROM Employee e1
+WHERE manager_id IS NOT NULL
+AND NOT EXISTS (
+    SELECT 1 
+    FROM Employee e2 
+    WHERE e2.manager_id = e1.manager_id 
+    AND e2.salary < 3500
+);
+SELECT e.first_name, e.last_name, e.employee_id, e.email, 
+       e.salary, e.department_id, e.commission_pct, e.manager_id
+FROM Employee e
+JOIN (
+    SELECT manager_id, MIN(commission_pct) AS min_commission_pct
+    FROM Employee
+    WHERE manager_id IS NOT NULL
+    GROUP BY manager_id
+) sub ON e.manager_id = sub.manager_id AND e.commission_pct = sub.min_commission_pct;
