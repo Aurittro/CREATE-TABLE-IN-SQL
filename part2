@@ -1,0 +1,35 @@
+SELECT DISTINCT Customer.customer_name
+FROM Customer
+JOIN Depositor ON Customer.customer_id = Depositor.customer_id
+JOIN Account ON Depositor.account_number = Account.account_number
+WHERE Account.branch_name IN (
+    SELECT Account.branch_name 
+    FROM Account
+    JOIN Depositor ON Account.account_number = Depositor.account_number
+    JOIN Customer ON Depositor.customer_id = Customer.customer_id
+    WHERE Customer.customer_name = 'Johnson'
+);
+
+SELECT DISTINCT Customer.customer_name 
+FROM Customer 
+JOIN Depositor ON Customer.customer_id = Depositor.customer_id 
+JOIN Account ON Depositor.account_number = Account.account_number 
+JOIN Loan ON Account.branch_name = Loan.branch_name 
+WHERE Loan.branch_name != 'Mianus';
+
+SELECT DISTINCT Customer.customer_name
+FROM Customer
+JOIN Depositor ON Customer.customer_id = Depositor.customer_id
+JOIN Account ON Depositor.account_number = Account.account_number
+WHERE Account.branch_name = 'Mianus'
+AND Customer.customer_id NOT IN (
+    SELECT Borrower.customer_id
+    FROM Borrower
+    JOIN Loan ON Borrower.loan_number = Loan.loan_number
+    WHERE Loan.branch_name = 'Mianus'
+);
+
+SELECT Account.branch_name, COUNT(DISTINCT Depositor.customer_id) AS customer_count
+FROM Account
+JOIN Depositor ON Account.account_number = Depositor.account_number
+GROUP BY Account.branch_name;
